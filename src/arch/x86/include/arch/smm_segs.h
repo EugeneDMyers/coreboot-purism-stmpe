@@ -1,9 +1,6 @@
 /*
  * This file is part of the coreboot project.
  *
- * Copyright (C) 2014 Google Inc.
- * Copyright (C) 2015-2016 Intel Corporation.
- *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; version 2 of the License.
@@ -14,20 +11,12 @@
  * GNU General Public License for more details.
  */
 
-#ifndef _SOC_PM_H_
-#define _SOC_PM_H_
+#ifndef SMM_SEGS_H
+#define SMM_SEGS_H
 
-#include <stdint.h>
-#include <arch/acpi.h>
+#define SMM_CODE_SEG 0x08
+#define SMM_DATA_SEG 0x10
+#define SMM_TR_SEG   0x18
+#define SMM_CODE_SEG64 0x20
 
-struct chipset_power_state {
-	uint32_t prev_sleep_state;
-} __packed;
-
-struct chipset_power_state *get_power_state(void);
-int fill_power_state(void);
-
-/* STM Support */
-uint16_t get_pmbase(void);
-
-#endif /* _SOC_PM_H_ */
+#endif /* SMM_SEGS_H */

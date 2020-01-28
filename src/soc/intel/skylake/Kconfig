@@ -137,7 +137,7 @@ config HEAP_SIZE
 
 config IED_REGION_SIZE
 	hex
-	default 0x400000
+	default 0x000000
 
 config PCR_BASE_ADDRESS
 	hex
