@@ -42,3 +42,6 @@
 	url = https://review.coreboot.org/amd_blobs
 	update = none
 	ignore = dirty
+[submodule "3rdparty/purism-blobs"]
+	path = 3rdparty/purism-blobs
+	url = https://source.puri.sm/coreboot/purism-blobs.git
