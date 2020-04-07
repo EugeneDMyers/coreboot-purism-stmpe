@@ -1,4 +1,5 @@
 /pci@i0cf8/pci-bridge@1d/*@0
+/pci@i0cf8/pci-bridge@1d,4/*@0
 /pci@i0cf8/*@17/drive@2/disk@0
 /pci@i0cf8/*@1f,2/drive@1/disk@0
 /pci@i0cf8/*@1f,2/drive@3/disk@0

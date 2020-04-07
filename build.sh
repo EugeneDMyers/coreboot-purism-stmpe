@@ -84,3 +84,9 @@ rm -f flashregion* 2>/dev/null
 
 # add default bootorder
 cbfstool $filename add -t raw -n bootorder -f bootorder.txt >/dev/null
+
+# add an 8s boot delay for the Librem Mini so splash screen
+# actually shown on displays with sluggish init
+if [[ ${BOARD^^} == "LIBREM_MINI" ]]; then
+	cbfstool $filename add-int -i 8000 -n etc/boot-menu-wait >/dev/null
+fi
