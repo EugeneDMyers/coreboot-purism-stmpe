@@ -154,14 +154,14 @@ extern uint8_t *stm_resource_heap;
 
 static int stm_load_status = 0;
 
-void stm_setup(uintptr_t mseg, int cpu, int num_cpus, uintptr_t smbase,
+void stm_setup(uintptr_t mseg, int cpu, uintptr_t smbase,
 			uintptr_t base_smbase, uint32_t offset32)
 {
 	msr_t InitMseg;
 	msr_t MsegChk;
 	uintptr_t addr_calc;  // used to calculate the stm resource heap area
 
-	printk(BIOS_DEBUG, "STM: set up for cpu %d/%d\n", cpu, num_cpus);
+	printk(BIOS_DEBUG, "STM: set up for cpu %d\n", cpu);
 	if (cpu == 0) {
 
 		// need to create the BIOS resource list once
