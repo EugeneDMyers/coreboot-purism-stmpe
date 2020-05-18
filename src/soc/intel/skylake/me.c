@@ -190,9 +190,6 @@ void intel_me_status(void)
 	union me_hfsts3 hfs3;
 	union me_hfsts6 hfs6;
 
-	if (!is_cse_enabled())
-		return;
-
 	hfs1.data = me_read_config32(PCI_ME_HFSTS1);
 	hfs2.data = me_read_config32(PCI_ME_HFSTS2);
 	hfs3.data = me_read_config32(PCI_ME_HFSTS3);
