@@ -268,7 +268,6 @@ static int smm_module_setup_stub(void *smbase, struct smm_loader_params *params,
 	stub_params->fxsave_area_size = FXSAVE_SIZE;
 	stub_params->runtime.smbase = (uintptr_t)smbase;
 	stub_params->runtime.save_state_size = params->per_cpu_save_state_size;
-	stub_params->runtime.num_cpus = params->num_concurrent_stacks;
 
 	/* Initialize the APIC id to CPU number table to be 1:1 */
 	for (i = 0; i < params->num_concurrent_stacks; i++)
