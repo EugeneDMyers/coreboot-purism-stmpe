@@ -151,7 +151,7 @@ config SMM_RESERVED_SIZE
 
 config SMM_TSEG_SIZE
 	hex
-	default 0x800000
+	default 0x1000000
 
 config VGA_BIOS_ID
 	string
