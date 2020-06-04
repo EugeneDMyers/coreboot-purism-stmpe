@@ -42,6 +42,18 @@ config STM_BINARY_FILE
 	string "STM binary file"
 	default "3rdparty/blobs/cpu/intel/stm/stm.bin"
 
+config STM_HEAPSIZE
+	hex "stm_heapsize"
+	default 0x246000
+
+config STM_UART
+	hex "stm_uart"
+	default 0x3F8
+
+config STM_BUILD
+	string "stm_build"
+	default "debug"
+
 endmenu #STM
 
 endif

@@ -37,6 +37,7 @@ payloads/external/tianocore \
 payloads/external/GRUB2 \
 payloads/external/LinuxBoot \
 payloads/external/Yabits \
+payloads/external/stm
 
 payloads/coreinfo/build/coreinfo.elf coreinfo:
 	$(MAKE) -C payloads/coreinfo defaultbuild
