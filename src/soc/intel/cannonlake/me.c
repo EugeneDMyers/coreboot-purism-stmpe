@@ -103,9 +103,6 @@ void dump_me_status(void *unused)
 	union me_hfsts5 hfsts5;
 	union me_hfsts6 hfsts6;
 
-	if (!is_cse_enabled())
-		return;
-
 	hfsts1.data = me_read_config32(PCI_ME_HFSTS1);
 	hfsts2.raw = me_read_config32(PCI_ME_HFSTS2);
 	hfsts3.data = me_read_config32(PCI_ME_HFSTS3);
