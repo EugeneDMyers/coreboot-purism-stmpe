@@ -40,7 +40,9 @@ config BIOS_RESOURCE_LIST_SIZE
 
 config STM_BINARY_FILE
 	string "STM binary file"
-	default "3rdparty/blobs/cpu/intel/stm/stm.bin"
+	default "payloads/external/stm/STM/Stm/build/StmPkg/Core/stm.bin"
+	help
+		Old location is "3rdparty/blobs/cpu/intel/stm/stm.bin"
 
 config STM_HEAPSIZE
 	hex "stm_heapsize"
@@ -53,6 +55,14 @@ config STM_UART
 config STM_BUILD
 	string "stm_build"
 	default "debug"
+
+config STM_GIT_REPO
+	string "stm_git_repo"
+	default "https://review.coreboot.org/STM"
+
+config STM_GIT_BRANCH
+	string "stm_git_branch"
+	default "stmpe"
 
 endmenu #STM
 

@@ -318,7 +318,9 @@ payloads/external/stm/STM/Stm/build/StmPkg/Core/stm.bin stm:
 	$(MAKE) -C payloads/external/stm \
 		CONFIG_STM_UART=$(CONFIG_STM_UART) \
 		CONFIG_STM_HEAPSIZE=$(CONFIG_STM_HEAPSIZE) \
-		CONFIG_STM_BUILD=$(CONFIG_STM_BUILD)
+		CONFIG_STM_BUILD=$(CONFIG_STM_BUILD) \
+		CONFIG_STM_GIT_REPO=$(CONFIG_STM_GIT_REPO) \
+		CONFIG_STM_GIT_BRANCH=$(CONFIG_STM_GIT_BRANCH)
 
 .PHONY: stm payloads/external/stm/STM/Stm/build/StmPkg/Core/stm.bin
 

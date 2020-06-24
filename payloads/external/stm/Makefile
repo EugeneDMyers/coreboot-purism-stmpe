@@ -4,10 +4,8 @@
 project_name=STM
 project_dir=$(CURDIR)/$(project_name)
 build_dir=$(CURDIR)/$(project_name)/Stm/build
-#project_git_repo=https://review.coreboot.org/STM
-project_git_repo=file:///home/test/STMPE/STM/STM
-project_git_branch=stmpe
-#project_git_branch=stmpe_unstable
+project_git_repo=$(CONFIG_STM_GIT_REPO)
+project_git_branch=$(CONFIG_STM_GIT_BRANCH)
 
 
 all: build
@@ -23,7 +21,7 @@ fetch: $(project_dir)
 		if [ $$? -ne 0 ] || \
 		[ "$(TAG-y)" = "origin/$(project_git_branch)" ]; then \
 		echo "    Fetching new commits from the $(project_name) branch $(project_git_branch) git repo"; \
-		git fetch; fi
+		git pull; fi
 
 checkout: fetch
 	echo "   Checking out STM - $(project_git_branch)"
