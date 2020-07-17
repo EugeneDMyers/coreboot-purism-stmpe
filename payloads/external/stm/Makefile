@@ -15,17 +15,14 @@ $(project_dir):
 	git clone $(project_git_repo) $(project_name)
 
 fetch: $(project_dir)
-	echo "   Fetching new commits"
+	echo "   Fetching new commits";
 	cd $(project_dir); \
-		git show $(TAG-y) >/dev/null 2>&1; \
-		if [ $$? -ne 0 ] || \
-		[ "$(TAG-y)" = "origin/$(project_git_branch)" ]; then \
 		echo "    Fetching new commits from the $(project_name) branch $(project_git_branch) git repo"; \
-		git pull; fi
+		git pull;
 
 checkout: fetch
 	echo "   Checking out STM - $(project_git_branch)"
-	cd $(project_name); git checkout $(project_git_branch)
+	cd $(project_name); git checkout $(project_git_branch); git pull
 
 build: checkout
 	echo "    Build STM"
@@ -36,6 +33,7 @@ build: checkout
 	cmake .. -DBIOS=coreboot \
 		 -DUART=$(CONFIG_STM_UART) \
 		 -DHEAPSIZE=$(CONFIG_STM_HEAPSIZE) \
+		 -DCBMEM_ENABLE=$(CONFIG_STM_CBMEM_CONSOLE) \
 		 -DBUILD=$(CONFIG_STM_BUILD); \
 	$(MAKE);
 
