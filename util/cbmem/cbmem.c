@@ -29,6 +29,8 @@
 
 #define ARRAY_SIZE(a) (sizeof(a) / sizeof((a)[0]))
 
+#define COREBOOT_TABLE 0x79abe000
+
 typedef uint8_t u8;
 typedef uint16_t u16;
 typedef uint32_t u32;
@@ -1369,7 +1371,7 @@ int main(int argc, char** argv)
 
 	parse_cbtable(baseaddr, cb_table_size);
 #else
-	unsigned long long possible_base_addresses[] = { 0, 0xf0000 };
+	unsigned long long possible_base_addresses[] = { 0, 0xf0000, COREBOOT_TABLE };
 
 	/* Find and parse coreboot table */
 	for (size_t j = 0; j < ARRAY_SIZE(possible_base_addresses); j++) {
