@@ -42,10 +42,23 @@ config MSEG_SIZE
 		parameters have to be changed at the soc Konfig for them to
 		be applied.
 		Minimum sizes:
-		STM only - 0x100000
+		STM only - 0x100000 - Supports up to 38 processor threads
+			 - 0x200000 - Supports up to 102 processor threads
 		STM/PE   - 0x300000+ depending on the amount of memory needed
 		                     for the protected execution virtual
 		                     machine (VM/PE)
+
+config STM_STMPE_ENABLED
+	bool "STM/PE Enabled"
+	default n
+	help
+		STM/PE provides for additional virtual machines in SMRAM
+		that provides a protected execution environment for
+		applications such as introspection, which need to be
+		protected from malicious code.  More information can be
+		found on the stmpe branch of
+		ssh://review.coreboot.org/STM
+
 
 config BIOS_RESOURCE_LIST_SIZE
 	hex "bios_resource_list_size"
@@ -79,6 +92,14 @@ config STM_UART
 	help
 		Defines the serial port for the STM to send its console
 		output to.
+
+config STM_CBMEM_CONSOLE
+	bool "STM cbmem console"
+	default n
+	depends on CONSOLE_CBMEM
+	help
+		Places the STM console output into the cbmem.
+
 
 config STM_BUILD
 	string "stm_build"

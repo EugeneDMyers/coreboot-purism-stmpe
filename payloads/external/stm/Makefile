@@ -1,6 +1,4 @@
 
-
-
 project_name=STM
 project_dir=$(CURDIR)/$(project_name)
 build_dir=$(CURDIR)/$(project_name)/Stm/build
@@ -26,15 +24,16 @@ checkout: fetch
 
 build: checkout
 	echo "    Build STM"
-	cd $(project_name)/Stm; \
+	cd STM/Stm; \
 	rm -rf build; \
 	mkdir -p build; \
 	cd build; \
 	cmake .. -DBIOS=coreboot \
-		 -DUART=$(CONFIG_STM_UART) \
-		 -DHEAPSIZE=$(CONFIG_STM_HEAPSIZE) \
-		 -DCBMEM_ENABLE=$(CONFIG_STM_CBMEM_CONSOLE) \
-		 -DBUILD=$(CONFIG_STM_BUILD); \
+		-DUART=$(CONFIG_STM_UART) \
+		-DHEAPSIZE=$(CONFIG_STM_HEAPSIZE) \
+		-DCBMEM_ENABLE=$(CONFIG_STM_CBMEM_CONSOLE) \
+		-DSTMPE_ENABLED=$(CONFIG_STM_STMPE_ENABLED) \
+		-DBUILD=$(CONFIG_STM_BUILD); \
 	$(MAKE);
 
 clean:
