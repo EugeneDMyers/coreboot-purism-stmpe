@@ -149,7 +149,7 @@ config IFD_CHIPSET
 
 config IED_REGION_SIZE
 	hex
-	default 0x400000
+	default 0x000000
 
 config HEAP_SIZE
 	hex
@@ -209,7 +209,7 @@ config MAX_PCIE_CLOCKS
 
 config SMM_TSEG_SIZE
 	hex
-	default 0x800000
+	default 0x1000000
 
 config SMM_RESERVED_SIZE
 	hex
