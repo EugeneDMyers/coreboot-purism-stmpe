@@ -17,6 +17,7 @@
 #include <libgen.h>
 #include <assert.h>
 #include <regex.h>
+#include <time.h>
 #include <commonlib/cbmem_id.h>
 #include <commonlib/timestamp_serialized.h>
 #include <commonlib/tcpa_log_serialized.h>
@@ -52,6 +53,10 @@ struct mapping {
 /* verbose output? */
 static int verbose = 0;
 #define debug(x...) if(verbose) printf(x)
+
+/* User located cbmem table */
+
+static unsigned long long u_cbtable = COREBOOT_TABLE;
 
 /* File handle used to access /dev/mem */
 static int mem_fd;
@@ -718,7 +723,7 @@ struct cbmem_console {
 #define CBMC_OVERFLOW (1 << 31)
 
 /* dump the cbmem console */
-static void dump_console(int one_boot_only)
+static void dump_console(int one_boot_only, int print_continuous)
 {
 	const struct cbmem_console *console_p;
 	char *console_c;
@@ -804,6 +809,80 @@ static void dump_console(int one_boot_only)
 	}
 
 	puts(console_c + cursor);
+
+	free(console_c);
+
+	cursor = console_p->cursor & CBMC_CURSOR_MASK;
+
+	console_c = malloc(cursor);
+
+	memcpy(console_c, console_p->body, cursor);
+
+	while (print_continuous) {
+		/* Cycle to pick up any output to the CBMEM console buffer
+		 * This code assumes that the STM is preserving the coreboot
+		 * console output.  Since it does not know where the coreboot
+		 * console output ended, it determines the extent of the console
+		 * output by comparing the first part of the CBMEM buffer */
+		char *console_tc;
+		struct timespec delay;
+		size_t base;
+		size_t new_cursor = console_p->cursor	& CBMC_CURSOR_MASK;
+
+		if (new_cursor != cursor) {
+			if (new_cursor > cursor) {
+				size_t msize = new_cursor - cursor;
+				char *console_t = malloc(msize + 1);
+
+				/* bug - need to check for successful memory allocation */
+				memcpy(console_t, console_p->body + cursor, msize);
+				console_t[msize] = '\0';
+				console_tc = console_t;
+				while (*console_tc)
+					putchar (*console_tc++);
+
+				free(console_t);
+				cursor = new_cursor;
+			} else {
+				/* Output has wrapped around - so two parts */
+				size_t msize = console_p->size - cursor;
+				char *console_t = malloc(msize + 1);
+				/* bug - need to check for successful memory allocation */
+				memcpy(console_t, console_p->body + cursor, msize);
+				console_t[msize] = '\0';
+
+				console_tc = console_t;
+				while (*console_tc)
+					putchar (*console_tc++);
+
+				free(console_t);
+
+				/* Need to figure out he base for the second half	*/
+
+				console_t = malloc(new_cursor + 1);
+				memcpy(console_t, console_p->body, new_cursor);
+				for (base = 0; base < new_cursor; base++) {
+					if (console_t[base] != console_c[base])
+						break;
+				}
+				msize = new_cursor - base;
+
+				if (msize == 0)
+					continue;
+				console_tc = console_t + base;
+				console_tc[new_cursor - base] = '\0';
+				while (*console_tc)
+					putchar(*console_tc++);
+				free(console_t);
+				cursor = new_cursor;
+			}
+	}
+
+		delay.tv_sec = 0;
+		delay.tv_nsec = 100000;
+		nanosleep(&delay, NULL);
+	}
+
 	free(console_c);
 	unmap_memory(&console_mapping);
 }
@@ -1084,7 +1163,7 @@ static void print_version(void)
 
 static void print_usage(const char *name, int exit_code)
 {
-	printf("usage: %s [-cCltTLxVvh?]\n", name);
+	printf("usage: %s [-cCltTLxVvhs?]\n", name);
 	printf("\n"
 	     "   -c | --console:                   print cbmem console\n"
 	     "   -1 | --oneboot:                   print cbmem console for last boot only\n"
@@ -1097,6 +1176,8 @@ static void print_usage(const char *name, int exit_code)
 	     "   -L | --tcpa-log                   print TCPA log\n"
 	     "   -V | --verbose:                   verbose (debugging) output\n"
 	     "   -v | --version:                   print the version\n"
+	     "   -s | --continuous:                print continuous (for STM logs)\n"
+	     "   -u | --cbtable:                   manually enter the cb table location\n"
 	     "   -h | --help:                      print this help\n"
 	     "\n");
 	exit(exit_code);
@@ -1229,6 +1310,7 @@ int main(int argc, char** argv)
 	int print_tcpa_log = 0;
 	int machine_readable_timestamps = 0;
 	int one_boot_only = 0;
+	int print_continuous = 0;
 	unsigned int rawdump_id = 0;
 
 	int opt, option_index = 0;
@@ -1242,12 +1324,14 @@ int main(int argc, char** argv)
 		{"parseable-timestamps", 0, 0, 'T'},
 		{"hexdump", 0, 0, 'x'},
 		{"rawdump", required_argument, 0, 'r'},
+		{"continuous", 0, 0, 's'},
+		{"cbtable", 0, 0, 'u'},
 		{"verbose", 0, 0, 'V'},
 		{"version", 0, 0, 'v'},
 		{"help", 0, 0, 'h'},
 		{0, 0, 0, 0}
 	};
-	while ((opt = getopt_long(argc, argv, "c1CltTLxVvh?r:",
+	while ((opt = getopt_long(argc, argv, "c1CltTLxVvhs?u:r:",
 				  long_options, &option_index)) != EOF) {
 		switch (opt) {
 		case 'c':
@@ -1298,6 +1382,14 @@ int main(int argc, char** argv)
 			break;
 		case 'h':
 			print_usage(argv[0], 0);
+			break;
+		case 's':
+			print_console = 1;
+			print_defaults = 0;
+			print_continuous = 1;
+			break;
+		case 'u':
+			u_cbtable = strtoul(optarg, NULL, 16);
 			break;
 		case '?':
 		default:
@@ -1373,6 +1465,8 @@ int main(int argc, char** argv)
 #else
 	unsigned long long possible_base_addresses[] = { 0, 0xf0000, COREBOOT_TABLE };
 
+	possible_base_addresses[ARRAY_SIZE(possible_base_addresses) - 1] = u_cbtable;
+
 	/* Find and parse coreboot table */
 	for (size_t j = 0; j < ARRAY_SIZE(possible_base_addresses); j++) {
 		if (!parse_cbtable(possible_base_addresses[j], 0))
@@ -1384,7 +1478,7 @@ int main(int argc, char** argv)
 		die("Table not found.\n");
 
 	if (print_console)
-		dump_console(one_boot_only);
+		dump_console(one_boot_only, print_continuous);
 
 	if (print_coverage)
 		dump_coverage();
